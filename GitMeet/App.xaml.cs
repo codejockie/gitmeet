@@ -1,16 +1,25 @@
-﻿using System;
+﻿using System.Net.Http;
+using GitMeet.Data;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace GitMeet
 {
     public partial class App : Application
     {
+        public static UsersManager UserManager { get; set; }
+
         public App()
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            var httpClient = new HttpClient();
+            UserManager = new UsersManager(new RestService(httpClient));
+
+            MainPage = new NavigationPage(new MainPage())
+            {
+                BarBackgroundColor = Color.Accent,
+                BarTextColor = Color.White
+            };
         }
 
         protected override void OnStart()
