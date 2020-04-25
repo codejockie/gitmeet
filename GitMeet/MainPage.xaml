@@ -1,7 +1,107 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:d="http://xamarin.com/schemas/2014/forms/design" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="GitMeet.MainPage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:d="http://xamarin.com/schemas/2014/forms/design" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:helper="clr-namespace:GitMeet.Helpers" mc:Ignorable="d"   x:Class="GitMeet.MainPage">
+    <ContentPage.Resources>
+		<ResourceDictionary>
+			<helper:IntToBoolConverter x:Key="intToBool" />
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
+	<ContentPage.Padding>
+		<OnPlatform x:TypeArguments="Thickness"
+					iOS="10, 20, 10, 0"
+					Android="10, 0" />
+	</ContentPage.Padding>
     <StackLayout>
-        <!-- Place new controls here -->
-        <Label Text="Welcome to Xamarin.Forms!" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+        <StackLayout.Padding>
+			<OnPlatform x:TypeArguments="Thickness"
+					iOS="0, 5, 0, 0"
+					Android="0, 5, 0, 0" />
+		</StackLayout.Padding>
+		
+		<!--Styles-->
+		<StackLayout.Resources>
+			<ResourceDictionary>
+				<Style TargetType="Entry">
+					<Setter Property="HorizontalOptions" Value="FillAndExpand" />
+				</Style>
+
+				<Style TargetType="Image">
+					<Setter Property="VerticalOptions" Value="Center" />
+				</Style>
+				<Style TargetType="Label">
+					<Setter Property="VerticalOptions" Value="CenterAndExpand" />
+					<Setter Property="FontAttributes" Value="Italic" />
+				</Style>
+			</ResourceDictionary>
+		</StackLayout.Resources>
+
+		<!--Entry StackLayout-->
+		<StackLayout Orientation="Horizontal">
+
+			<Entry x:Name="locEntry" 
+				   Placeholder="Location" 
+				   Text="" />
+
+			<Entry x:Name="langEntry"
+				   Placeholder="Language" 
+				   Text="" />
+		</StackLayout>
+
+		<!--Search Button-->
+		<Button x:Name="searchBtn"
+				Text="Search"
+				VerticalOptions="Center"
+				Clicked="OnButtonClicked" 
+				TextColor="Accent">
+			<Button.Triggers>
+				<MultiTrigger TargetType="Button">
+					<MultiTrigger.Conditions>
+						<BindingCondition Binding="{Binding Source={x:Reference locEntry}, Path=Text.Length}" Value="0" />
+
+						<BindingCondition Binding="{Binding Source={x:Reference langEntry}, Path=Text.Length}" Value="0" />
+					</MultiTrigger.Conditions>
+
+					<Setter Property="IsEnabled" Value="False" />
+				</MultiTrigger>
+			</Button.Triggers>
+		</Button>
+
+		<ActivityIndicator x:Name="activityIndicator"
+						   VerticalOptions="CenterAndExpand"
+						   IsVisible="False" />
+
+		<!--Search result view-->
+		<ListView x:Name="listView"
+				  SeparatorVisibility="None"
+				  ItemSelected="OnItemSelected">
+			<ListView.RowHeight>
+				<OnPlatform x:TypeArguments="x:Int32" 
+							iOS="80" 
+							Android="80" />
+			</ListView.RowHeight>
+			
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<ViewCell>
+						<ContentView Padding="5">
+							<Frame OutlineColor="Accent"
+								   Padding="10">
+								<StackLayout Orientation="Horizontal">
+									<Image Source="{Binding Path=Avatar_Url}"
+									   HeightRequest="50"
+									   WidthRequest="50" />
+									<StackLayout>
+										<Label Text="{Binding Login, 
+															  StringFormat='Username: {0}'}" />
+										<Label Text="{Binding Score,
+															  StringFormat='Score: {0}'}" />
+									</StackLayout>
+								</StackLayout>
+							</Frame>
+						</ContentView>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
     </StackLayout>
 </ContentPage>
